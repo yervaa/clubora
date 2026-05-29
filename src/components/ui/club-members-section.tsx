@@ -12,6 +12,7 @@ import { MemberBulkActionsToolbar } from "@/components/ui/member-bulk-actions-to
 import { MemberImportPanel } from "@/components/ui/member-import-panel";
 import { ClubDuesTermEditDialog } from "@/components/ui/club-dues-term-edit-dialog";
 import { MemberProfileDialog } from "@/components/ui/member-profile-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { CardSection, PageEmptyState, SectionHeader } from "@/components/ui/page-patterns";
 import { PageIntro } from "@/components/ui/page-intro";
 import { ActionFeedbackBanner } from "@/components/ui/action-feedback-banner";
@@ -486,7 +487,7 @@ export function ClubMembersSection({
   }
 
   return (
-    <section className="space-y-6">
+    <section className="page-sections">
 
       <PageIntro
         title="Members"
@@ -1049,19 +1050,13 @@ export function ClubMembersSection({
 
         {rosterTotalCount === 0 ? (
           <div className="mt-6">
-            <PageEmptyState
+            <EmptyState
+              icon="ti-users"
               title="No members yet"
-              copy={
+              description={
                 canInviteMembers
-                  ? "Invite classmates to make this workspace collaborative. Your join code and invite tools are ready above."
-                  : "You are the first member. Ask an officer for an invite link or join code to bring more people in."
-              }
-              action={
-                canInviteMembers ? (
-                  <a href="#invite-members" className="btn-primary">
-                    Invite first members
-                  </a>
-                ) : null
+                  ? "Share your join code so classmates can find the club."
+                  : "Members will appear here once they join."
               }
             />
           </div>

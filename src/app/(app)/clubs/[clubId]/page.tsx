@@ -195,7 +195,7 @@ export default async function ClubOverviewPage({ params, searchParams }: ClubOve
   }
 
   return (
-    <section className="space-y-5 lg:space-y-8">
+    <div className="page-sections page-sections--loose">
       {canInviteMembers || canCreateEvents ? (
         <div className="flex flex-wrap gap-2">
           {canInviteMembers ? (
@@ -534,13 +534,10 @@ export default async function ClubOverviewPage({ params, searchParams }: ClubOve
         title="Recent activity"
         description="Latest actions in this club."
         viewMoreHref="/activity"
-        emptyHint="As members RSVP, officers post updates, and attendance gets marked, activity shows up here."
-        emptyAction={
-          <Link href={`/clubs/${club.id}/announcements`} className="btn-primary">
-            Post first update
-          </Link>
-        }
+        emptyIcon="ti-activity"
+        emptyTitle="No activity yet"
+        emptyDescription="As members RSVP and officers post updates, activity shows up here."
       />
-    </section>
+    </div>
   );
 }

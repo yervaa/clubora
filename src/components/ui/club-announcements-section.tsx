@@ -7,7 +7,8 @@ import { PollOptionFields } from "@/components/ui/poll-option-fields";
 import { ScrollToInputButton } from "@/components/ui/scroll-to-input-button";
 import { createAnnouncementAction } from "@/app/(app)/clubs/actions";
 import type { ClubDetail } from "@/lib/clubs/queries";
-import { CardSection, PageEmptyState, SectionHeader } from "@/components/ui/page-patterns";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CardSection, SectionHeader } from "@/components/ui/page-patterns";
 import { PageIntro } from "@/components/ui/page-intro";
 import { ActionFeedbackBanner } from "@/components/ui/action-feedback-banner";
 import { FormDraftPersistence } from "@/components/ui/form-draft-persistence";
@@ -48,7 +49,7 @@ export function ClubAnnouncementsSection({ club, query, permissions }: ClubAnnou
   }
 
   return (
-    <section className={`space-y-4 lg:space-y-6 ${canPostAnnouncements ? "pb-24 lg:pb-0" : ""}`}>
+    <section className={`page-sections ${canPostAnnouncements ? "pb-24 lg:pb-0" : ""}`}>
       <ClubPageStickyActions
         visible={canPostAnnouncements}
         href="#post-announcement"
@@ -240,19 +241,18 @@ export function ClubAnnouncementsSection({ club, query, permissions }: ClubAnnou
 
       {count === 0 ? (
         <div id="announcements">
-          <PageEmptyState
-            title="No announcements yet"
-            copy={
+          <EmptyState
+            icon="ti-speakerphone"
+            title="Nothing posted yet"
+            description={
               canPostAnnouncements
-                ? "Use the composer above to post the first update for this club."
-                : "Club officers will post updates here."
+                ? "Share the first update so members know what's going on."
+                : "Officers haven't posted anything here yet."
             }
             action={
-              canPostAnnouncements ? (
-                <ScrollToInputButton inputSelector='input[name="title"]' className="btn-secondary">
-                  Write first announcement
-                </ScrollToInputButton>
-              ) : null
+              canPostAnnouncements
+                ? { label: "Post announcement", href: "#post-announcement" }
+                : undefined
             }
           />
         </div>

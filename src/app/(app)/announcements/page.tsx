@@ -1,27 +1,24 @@
-import Link from "next/link";
 import { GlobalAnnouncementsList } from "@/components/ui/global-announcements-list";
-import { PageEmptyState } from "@/components/ui/page-patterns";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getDashboardData } from "@/lib/clubs/queries";
 
 export default async function AnnouncementsPage() {
   const { recentAnnouncements } = await getDashboardData();
 
   return (
-    <section className="space-y-4 lg:space-y-6">
+    <>
       <h1 className="app-page-title">Announcements</h1>
-      {recentAnnouncements.length === 0 ? (
-        <PageEmptyState
-          title="No announcements yet"
-          copy="Announcements from your clubs will appear here. If you are an officer, post the first update to make this feed useful for everyone."
-          action={
-            <Link href="/my-clubs" className="btn-primary">
-              Open my clubs
-            </Link>
-          }
-        />
-      ) : (
-        <GlobalAnnouncementsList announcements={recentAnnouncements} />
-      )}
-    </section>
+      <div className="page-sections">
+        {recentAnnouncements.length === 0 ? (
+          <EmptyState
+            icon="ti-speakerphone"
+            title="All quiet here"
+            description="No announcements from your clubs yet."
+          />
+        ) : (
+          <GlobalAnnouncementsList announcements={recentAnnouncements} />
+        )}
+      </div>
+    </>
   );
 }

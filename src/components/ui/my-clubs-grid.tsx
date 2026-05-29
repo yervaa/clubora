@@ -129,7 +129,7 @@ function MyClubCard({ club }: { club: UserClub }) {
     <li>
       <Link
         href={`/clubs/${club.id}`}
-        className="my-clubs-card flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md"
+        className="my-clubs-card card-interactive flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
       >
         <div className="relative flex h-20 items-center justify-center" style={{ backgroundColor: accent }}>
           <span style={{ color: iconColor }}>
@@ -163,7 +163,7 @@ function JoinOrStartCard() {
     <li>
       <Link
         href="/clubs/join"
-        className="my-clubs-join-card flex h-full min-h-[11.5rem] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-4 py-8 text-center transition hover:border-slate-400 hover:bg-slate-50"
+        className="my-clubs-join-card card-interactive flex h-full min-h-[11.5rem] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-4 py-8 text-center hover:border-slate-400 hover:bg-slate-50"
       >
         <svg
           width={28}

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { ActivityFeedItem } from "@/lib/activity/types";
 import { ClubColorDot } from "@/components/ui/club-color-dot";
-import { CardSection, PageEmptyState, SectionHeader } from "@/components/ui/page-patterns";
-import type { ReactNode } from "react";
+import { EmptyState, type EmptyStateIcon } from "@/components/ui/empty-state";
+import { CardSection, SectionHeader } from "@/components/ui/page-patterns";
 
 type ActivityFeedProps = {
   items: ActivityFeedItem[];
@@ -10,8 +10,9 @@ type ActivityFeedProps = {
   description?: string;
   viewMoreHref?: string;
   variant?: "primary" | "secondary";
-  emptyAction?: ReactNode;
-  emptyHint?: string;
+  emptyIcon?: EmptyStateIcon;
+  emptyTitle?: string;
+  emptyDescription?: string;
   /** Dashboard: club-colored initials on each row; omit section kicker */
   showClubDots?: boolean;
 };
@@ -54,12 +55,13 @@ export function ActivityFeed({
   description = "Recent actions across your clubs.",
   viewMoreHref,
   variant = "secondary",
-  emptyAction,
-  emptyHint,
+  emptyIcon = "ti-activity",
+  emptyTitle = "No activity yet",
+  emptyDescription = "Actions across your clubs will show up here.",
   showClubDots = false,
 }: ActivityFeedProps) {
   return (
-    <CardSection className={variant === "primary" ? "sm:p-6" : ""}>
+    <CardSection>
       <SectionHeader
         kicker={showClubDots ? undefined : "Activity"}
         title={title}
@@ -69,14 +71,7 @@ export function ActivityFeed({
 
       {items.length === 0 ? (
         <div className="mt-4">
-          <PageEmptyState
-            title="No recent activity"
-            copy={
-              emptyHint
-                ?? "New announcements, RSVPs, events, and role updates will appear here."
-            }
-            action={emptyAction}
-          />
+          <EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} embedded />
         </div>
       ) : (
         <ul className="mt-4 space-y-2">

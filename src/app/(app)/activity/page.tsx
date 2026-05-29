@@ -11,23 +11,21 @@ export default async function ActivityPage() {
   ]);
 
   return (
-    <section className="space-y-4 lg:space-y-6">
+    <>
       <h1 className="app-page-title">Activity</h1>
-      <ActivityFeed
-        items={activityItems}
-        title="Recent activity"
-        description="Announcements, events, RSVPs, attendance, and role updates across your clubs."
-        showClubDots
-        emptyHint="Activity appears after clubs start posting announcements, creating events, and tracking attendance."
-        emptyAction={
-          <Link href="/my-clubs" className="btn-primary">
-            Explore my clubs
-          </Link>
-        }
-      />
+      <div className="page-sections">
+        <ActivityFeed
+          items={activityItems}
+          title="Recent activity"
+          description="Announcements, events, RSVPs, attendance, and role updates across your clubs."
+          showClubDots
+          emptyIcon="ti-activity"
+          emptyTitle="No activity yet"
+          emptyDescription="Actions across your clubs will show up here."
+        />
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        <CardSection>
+        <div className="grid gap-4 xl:grid-cols-2">
+          <CardSection>
           <SectionHeader
             title="Open assignments"
             action={<span className="badge-soft">{myOpenTasks.length}</span>}
@@ -57,11 +55,11 @@ export default async function ActivityPage() {
               ))}
             </ul>
           )}
-        </CardSection>
+          </CardSection>
 
-        <CardSection>
-          <SectionHeader
-            title="Attention needed"
+          <CardSection>
+            <SectionHeader
+              title="Attention needed"
             action={<span className="badge-soft">{needsAttentionAlerts.length}</span>}
           />
           {needsAttentionAlerts.length === 0 ? (
@@ -90,8 +88,9 @@ export default async function ActivityPage() {
               ))}
             </ul>
           )}
-        </CardSection>
+          </CardSection>
+        </div>
       </div>
-    </section>
+    </>
   );
 }

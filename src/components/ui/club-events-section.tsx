@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createEventAction } from "@/app/(app)/clubs/actions";
 import { ClubEventCardFull } from "@/components/ui/club-event-card-full";
 import { ClubEventPastFoldable } from "@/components/ui/club-event-past-foldable";
+import { EmptyState } from "@/components/ui/empty-state";
 import { CardSection, PageEmptyState, SectionHeader } from "@/components/ui/page-patterns";
 import { ScrollToInputButton } from "@/components/ui/scroll-to-input-button";
 import { ActionFeedbackBanner } from "@/components/ui/action-feedback-banner";
@@ -498,19 +499,18 @@ export function ClubEventsSection({ club, query, permissions, listFilter = "all"
             "Upcoming",
             "Events scheduled in the future — RSVP and prepare ahead of time.",
             upcomingFiltered.length === 0 ? (
-              <PageEmptyState
-                title="No upcoming events"
-                copy={canCreateEvents ? "Schedule the next club touchpoint above." : "Check back when officers add the next date."}
+              <EmptyState
+                icon="ti-calendar-event"
+                title="Nothing scheduled"
+                description={
+                  canCreateEvents
+                    ? "Schedule your first meeting so members can RSVP."
+                    : "No upcoming events. Officers can create one anytime."
+                }
                 action={
-                  canCreateEvents ? (
-                    <ScrollToInputButton inputSelector='input[id="event_title"]' className="btn-primary">
-                      Create first event
-                    </ScrollToInputButton>
-                  ) : (
-                    <Link href={`/clubs/${club.id}/announcements`} className="btn-secondary">
-                      Check announcements
-                    </Link>
-                  )
+                  canCreateEvents
+                    ? { label: "Create event", href: `#create-event` }
+                    : undefined
                 }
               />
             ) : (

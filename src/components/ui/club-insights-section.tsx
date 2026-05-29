@@ -138,7 +138,7 @@ export function ClubInsightsSection({
   const showExport = canExportInsights && exportPayload && hasData;
 
   return (
-    <section id="club-insights" className="space-y-5 lg:space-y-8">
+    <section id="club-insights" className="page-sections page-sections--loose">
       {showExport ? (
         <div className="flex justify-end">
           <InsightsExportButton payload={exportPayload} />

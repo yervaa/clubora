@@ -8,6 +8,7 @@ import {
   deleteTaskAction,
   type TaskActionResult,
 } from "@/lib/tasks/actions";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { ClubTask, TaskStatus, TaskPriority, TaskAssignee } from "@/lib/tasks/queries";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -581,7 +582,7 @@ export function ClubTasksSection({
   ];
 
   return (
-    <section className="space-y-4 lg:space-y-6">
+    <section className="page-sections">
 
       <header className="card-surface border border-slate-200/90 bg-gradient-to-br from-slate-50 to-emerald-50/80 p-4 shadow-sm sm:p-6 lg:border-2 lg:p-8 lg:shadow-[var(--shadow-soft)]">
         <div className="max-w-4xl">
@@ -763,34 +764,27 @@ export function ClubTasksSection({
         {/* Task list */}
         <div className="mt-5 space-y-3">
           {filteredTasks.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-200 px-6 py-12 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
-                <svg className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
+            tasks.length === 0 ? (
+              <EmptyState
+                icon="ti-checkbox"
+                title="No tasks yet"
+                description={
+                  permissions.canCreate
+                    ? "Add an assignment so members know what to work on."
+                    : "Assignments and to-dos for this club show up here."
+                }
+                action={
+                  permissions.canCreate
+                    ? { label: "Create task", onClick: () => setShowCreateForm(true) }
+                    : undefined
+                }
+              />
+            ) : (
+              <div className="rounded-xl border border-dashed border-slate-200 px-6 py-12 text-center">
+                <p className="text-sm font-semibold text-slate-700">No tasks match your filters</p>
+                <p className="mt-1 text-xs text-slate-500">Try adjusting the status filter or search term.</p>
               </div>
-              <p className="mt-4 text-sm font-semibold text-slate-700">
-                {tasks.length === 0
-                  ? "No tasks yet"
-                  : "No tasks match your filters"}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                {tasks.length === 0 && permissions.canCreate
-                  ? "Create your first task to get started."
-                  : tasks.length === 0
-                  ? "Your club officers will assign tasks here."
-                  : "Try adjusting the status filter or search term."}
-              </p>
-              {tasks.length === 0 && permissions.canCreate && (
-                <button
-                  type="button"
-                  onClick={() => setShowCreateForm(true)}
-                  className="btn-secondary mt-4 text-sm"
-                >
-                  Create first task
-                </button>
-              )}
-            </div>
+            )
           ) : (
             filteredTasks.map((task) => (
               <TaskCard

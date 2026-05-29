@@ -90,7 +90,7 @@ export default async function ClubEventsPage({ params, searchParams }: ClubEvent
     .join(" · ");
 
   return (
-    <section className={`space-y-4 lg:space-y-6 ${permissions.canCreateEvents ? "pb-24 lg:pb-0" : ""}`}>
+    <div className={`page-sections ${permissions.canCreateEvents ? "pb-24 lg:pb-0" : ""}`}>
       <ClubPageStickyActions
         visible={permissions.canCreateEvents}
         href="#create-event"
@@ -196,6 +196,6 @@ export default async function ClubEventsPage({ params, searchParams }: ClubEvent
 
       {/* List view (existing component) */}
       <ClubEventsSection club={club} query={query} permissions={permissions} listFilter={listFilter} />
-    </section>
+    </div>
   );
 }

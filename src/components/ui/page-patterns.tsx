@@ -43,7 +43,7 @@ type CardSectionProps = {
 
 export function CardSection({ children, className = "", ...props }: CardSectionProps) {
   return (
-    <section className={`card-surface p-4 sm:p-5 ${className}`.trim()} {...props}>
+    <section className={`card-surface ${className}`.trim()} {...props}>
       {children}
     </section>
   );

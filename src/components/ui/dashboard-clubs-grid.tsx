@@ -75,7 +75,7 @@ export function DashboardClubsGrid({ clubs }: DashboardClubsGridProps) {
           <h2 id="dash-your-clubs-heading" className="text-base font-semibold tracking-tight text-slate-900 sm:text-lg">
             Your clubs
           </h2>
-          <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">Jump into a workspace.</p>
+          <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">Jump into a workspace</p>
         </div>
         <Link href="/clubs/join" className="text-sm font-medium text-slate-600 hover:text-slate-900">
           Join another →
@@ -93,7 +93,7 @@ export function DashboardClubsGrid({ clubs }: DashboardClubsGridProps) {
             <li key={club.id}>
               <Link
                 href={`/clubs/${club.id}`}
-                className="dashboard-club-card block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md"
+                className="dashboard-club-card card-interactive block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
               >
                 <div
                   className="relative flex h-16 items-center justify-center"
