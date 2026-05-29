@@ -2,11 +2,9 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getUserPermissions } from "@/lib/rbac/permissions";
-import { ClubPageStickyActions } from "@/components/ui/club-page-sticky-actions";
 import { ClubEventsSection } from "@/components/ui/club-events-section";
 import { EventCalendarView } from "@/components/ui/event-calendar-view";
-import { PageIntro } from "@/components/ui/page-intro";
-import { CardSection, SectionHeader } from "@/components/ui/page-patterns";
+import { CardSection } from "@/components/ui/page-patterns";
 import { partitionEventsByLifecycle } from "@/lib/clubs/event-lifecycle";
 import { getClubDetailForEventsForCurrentUser } from "@/lib/clubs/queries";
 
@@ -89,33 +87,14 @@ export default async function ClubEventsPage({ params, searchParams }: ClubEvent
     .filter(Boolean)
     .join(" · ");
 
-  return (
-    <div className={`page-sections ${permissions.canCreateEvents ? "pb-24 lg:pb-0" : ""}`}>
-      <ClubPageStickyActions
-        visible={permissions.canCreateEvents}
-        href="#create-event"
-        label="Create event"
-      />
-
-      <PageIntro
-        title="Events"
-        description={
-          permissions.canCreateEvents
-            ? "RSVPs on the surface, while attendance and reflection controls stay in organizer tools."
-            : "Upcoming events, your RSVPs, and what happened after each event."
-        }
-      />
-
-      <CardSection className="space-y-4">
-        <SectionHeader
-          kicker="View"
-          title="Event list controls"
-          description="Jump between sections, export calendar data, and switch list or calendar view."
-        />
-        <p className="text-sm font-medium text-slate-700">{statsLine}</p>
-
+  const filterToolbar = (
+    <div className="club-events-toolbar">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         {viewMode === "list" ? (
-          <nav className="flex flex-wrap gap-2 text-sm font-semibold" aria-label="Event sections">
+          <nav
+            className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-semibold"
+            aria-label="Event sections"
+          >
             <a
               href="#upcoming"
               className="inline-flex min-h-10 items-center rounded-full border border-slate-200 bg-white px-3.5 py-2 text-slate-700 hover:border-slate-300"
@@ -148,10 +127,13 @@ export default async function ClubEventsPage({ params, searchParams }: ClubEvent
                 Needs review
               </Link>
             ) : null}
+            <span className="w-full text-xs font-medium text-slate-500 sm:w-auto sm:pl-1">{statsLine}</span>
           </nav>
-        ) : null}
+        ) : (
+          <p className="text-xs font-medium text-slate-500">{statsLine}</p>
+        )}
 
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 lg:shrink-0">
           <a
             href={`/clubs/${clubId}/events/export`}
             download
@@ -187,15 +169,23 @@ export default async function ClubEventsPage({ params, searchParams }: ClubEvent
             </a>
           </div>
         </div>
-      </CardSection>
+      </div>
+    </div>
+  );
 
-      {/* Calendar view */}
-      {viewMode === "calendar" && (
-        <EventCalendarView events={calendarEvents} clubId={clubId} />
+  return (
+    <div className="page-sections">
+      {viewMode === "calendar" ? (
+        <>
+          <CardSection className="space-y-3">{filterToolbar}</CardSection>
+          <EventCalendarView events={calendarEvents} clubId={clubId} />
+        </>
+      ) : (
+        <div className="club-events-unified-card card-surface overflow-hidden" id="events">
+          {filterToolbar}
+          <ClubEventsSection club={club} query={query} permissions={permissions} listFilter={listFilter} layout="unified" />
+        </div>
       )}
-
-      {/* List view (existing component) */}
-      <ClubEventsSection club={club} query={query} permissions={permissions} listFilter={listFilter} />
     </div>
   );
 }

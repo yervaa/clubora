@@ -14,30 +14,29 @@ type ClubEventPastFoldableProps = {
   canMarkAttendance: boolean;
   canManageReflections: boolean;
   canViewAggregatedStats: boolean;
+  /** Flat row inside unified events card (no per-row card chrome). */
+  variant?: "default" | "unified";
 };
 
-export function ClubEventPastFoldable(props: ClubEventPastFoldableProps) {
+export function ClubEventPastFoldable({ variant = "default", ...props }: ClubEventPastFoldableProps) {
   const { event, canViewAggregatedStats } = props;
+  const isUnified = variant === "unified";
   const totalRsvp = event.rsvpCounts.yes + event.rsvpCounts.no + event.rsvpCounts.maybe + event.rsvpCounts.waitlist;
-  const turnoutVsRsvpYes =
-    event.rsvpCounts.yes > 0 ? Math.min(100, Math.round((event.attendanceCount / event.rsvpCounts.yes) * 100)) : null;
 
   const supportingRight = canViewAggregatedStats ? (
     <div className="text-xs leading-relaxed text-slate-500 sm:text-right">
-      <p>
-        <span className="font-semibold text-slate-700">{event.attendanceCount}</span> attended
-        {totalRsvp > 0 ? (
-          <>
-            <span className="text-slate-300"> · </span>
-            <span className="font-semibold text-slate-700">{totalRsvp}</span> RSVP
-          </>
-        ) : null}
-      </p>
+      {totalRsvp > 0 ? (
+        <p>
+          <span className="font-semibold text-slate-700">{event.attendanceCount}</span> of{" "}
+          <span className="font-semibold text-slate-700">{totalRsvp}</span> attended
+        </p>
+      ) : (
+        <p>
+          <span className="font-semibold text-slate-700">{event.attendanceCount}</span> attended
+        </p>
+      )}
       {event.rsvpCounts.waitlist > 0 ? (
         <p className="mt-0.5 text-[11px] text-amber-700">{event.rsvpCounts.waitlist} waitlisted</p>
-      ) : null}
-      {turnoutVsRsvpYes !== null ? (
-        <p className="mt-0.5 text-[11px] text-slate-400">~{turnoutVsRsvpYes}% of “yes” checked in</p>
       ) : null}
     </div>
   ) : (
@@ -54,9 +53,27 @@ export function ClubEventPastFoldable(props: ClubEventPastFoldableProps) {
   );
 
   return (
-    <details className="event-history-details group rounded-xl border border-slate-200/90 bg-white shadow-sm open:border-slate-300 open:shadow-md">
-      <summary className="event-history-summary cursor-pointer list-none p-0 [&::-webkit-details-marker]:hidden">
-        <div className="flex flex-col gap-4 p-4 pr-12 transition hover:bg-slate-50/80 active:bg-slate-100/80 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:pr-14">
+    <details
+      className={
+        isUnified
+          ? "club-events-past-row group border-b border-[color:var(--color-border-tertiary)] last:border-b-0"
+          : "event-history-details group rounded-xl border border-slate-200/90 bg-white shadow-sm open:border-slate-300 open:shadow-md"
+      }
+    >
+      <summary
+        className={
+          isUnified
+            ? "club-events-past-row__summary cursor-pointer list-none p-0 [&::-webkit-details-marker]:hidden"
+            : "event-history-summary cursor-pointer list-none p-0 [&::-webkit-details-marker]:hidden"
+        }
+      >
+        <div
+          className={
+            isUnified
+              ? "flex flex-col gap-2 px-4 py-3 pr-10 transition hover:bg-slate-50/80 sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:pr-12"
+              : "flex flex-col gap-4 p-4 pr-12 transition hover:bg-slate-50/80 active:bg-slate-100/80 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:pr-14"
+          }
+        >
           <div className="min-w-0 flex-1">
             <EventSummaryBlock
               title={event.title}
@@ -78,7 +95,13 @@ export function ClubEventPastFoldable(props: ClubEventPastFoldableProps) {
           </div>
         </div>
       </summary>
-      <div className="border-t border-slate-100 px-3 pb-3 pt-2 sm:px-4 sm:pb-4">
+      <div
+        className={
+          isUnified
+            ? "border-t border-[color:var(--color-border-tertiary)] px-4 pb-3 pt-2"
+            : "border-t border-slate-100 px-3 pb-3 pt-2 sm:px-4 sm:pb-4"
+        }
+      >
         <ClubEventCardFull {...props} as="div" omitPrimaryHeader />
       </div>
     </details>

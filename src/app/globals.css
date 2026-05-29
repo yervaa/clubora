@@ -1885,6 +1885,202 @@ button.surface-subcard:active {
   transform: rotate(180deg);
 }
 
+/* Club events — unified list card */
+.club-events-unified-card.card-surface {
+  padding: 0;
+}
+
+.club-events-toolbar {
+  padding: var(--space-4);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+
+.club-events-unified-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.club-events-inline-alert,
+.club-events-filter-banner,
+.club-events-review-banner {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+
+.club-events-filter-banner {
+  background: rgb(255 251 235 / 0.65);
+  font-size: var(--text-sm);
+  color: rgb(120 53 15);
+}
+
+.club-events-review-banner {
+  background: linear-gradient(to bottom right, rgb(255 251 235), rgb(255 247 237 / 0.6));
+  font-size: var(--text-sm);
+}
+
+.club-events-quick-create {
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+
+.club-events-quick-create__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.club-events-quick-create__summary:hover {
+  background-color: rgb(248 250 252 / 0.9);
+}
+
+.club-events-quick-create__form {
+  padding: 0 var(--space-4) var(--space-4);
+  border-top: 0.5px solid var(--color-border-tertiary);
+}
+
+.club-events-section {
+  border-top: 0.5px solid var(--color-border-tertiary);
+}
+
+.club-events-unified-body > .club-events-section:first-child,
+.club-events-unified-body > .club-events-empty-compact:first-child {
+  border-top: none;
+}
+
+.club-events-section__heading {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  line-height: var(--leading-snug);
+}
+
+.club-events-section__body > .event-card,
+.club-events-row-group > .event-card {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  background: transparent;
+  box-shadow: none;
+  padding: var(--space-3) var(--space-4);
+  transition: background-color var(--transition-fast);
+}
+
+.club-events-section__body > .event-card:last-child,
+.club-events-row-group:last-child > .event-card {
+  border-bottom: none;
+}
+
+.club-events-section__body > .event-card:hover,
+.club-events-row-group > .event-card:hover {
+  transform: none;
+  box-shadow: none;
+  background-color: rgb(248 250 252 / 0.65);
+}
+
+.club-events-row-group {
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+
+.club-events-row-group:last-child {
+  border-bottom: none;
+}
+
+.club-events-section__body:has(.club-events-empty-compact) {
+  padding-bottom: var(--space-5);
+}
+
+.club-events-empty-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 200px;
+  min-height: 7rem;
+  padding: var(--space-4) var(--space-4) var(--space-6);
+  overflow: hidden;
+}
+
+.club-events-empty-compact .ui-empty-state--embedded {
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+
+.club-events-empty-compact .ui-empty-state__description {
+  font-size: var(--text-sm);
+}
+
+.club-events-past-accordion {
+  border-top: 0.5px solid var(--color-border-tertiary);
+}
+
+.club-events-past-accordion__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.club-events-past-accordion__summary:hover {
+  background-color: rgb(248 250 252 / 0.9);
+}
+
+.club-events-past-accordion__summary .badge-soft {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+
+.club-events-past-accordion__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.club-events-past-accordion__chevron {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+  transition: transform 0.2s ease;
+}
+
+.club-events-past-accordion__details[open] .club-events-past-accordion__chevron {
+  transform: rotate(180deg);
+}
+
+.club-events-past-accordion__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+}
+
+.club-events-past-accordion__details[open] .club-events-past-accordion__panel {
+  grid-template-rows: 1fr;
+}
+
+.club-events-past-accordion__panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.club-events-past-accordion__footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 0.5px solid var(--color-border-tertiary);
+  font-size: var(--text-sm);
+}
+
+.club-events-past-row__summary:focus-visible {
+  outline: 2px solid rgb(59 130 246 / 0.45);
+  outline-offset: -2px;
+}
+
 .dashboard-latest-updates-link {
   font-size: var(--text-sm);
   color: var(--color-text-tertiary);
