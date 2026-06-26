@@ -8,6 +8,7 @@ import { Redis } from "@upstash/redis";
 type PolicyName =
   | "login"
   | "signup"
+  | "passwordChange"
   | "clubCreate"
   | "clubJoin"
   | "announcementCreate"
@@ -18,7 +19,8 @@ type PolicyName =
   | "clubDataExport"
   | "joinRequestReview"
   | "taskWrite"
-  | "duesCheckout";
+  | "duesCheckout"
+  | "search";
 
 type PolicyConfig = {
   limit: number;
@@ -47,6 +49,8 @@ type LocalBucket = {
 const RATE_LIMIT_POLICIES: Record<PolicyName, PolicyConfig> = {
   login: { limit: 5, duration: "10 m", windowMs: 10 * 60 * 1000 },
   signup: { limit: 4, duration: "30 m", windowMs: 30 * 60 * 1000 },
+  /** Current-password verification on password change — per user. Brute-force guard. */
+  passwordChange: { limit: 5, duration: "15 m", windowMs: 15 * 60 * 1000 },
   clubCreate: { limit: 6, duration: "1 h", windowMs: 60 * 60 * 1000 },
   clubJoin: { limit: 12, duration: "10 m", windowMs: 10 * 60 * 1000 },
   announcementCreate: { limit: 20, duration: "10 m", windowMs: 10 * 60 * 1000 },
@@ -63,6 +67,8 @@ const RATE_LIMIT_POLICIES: Record<PolicyName, PolicyConfig> = {
   taskWrite: { limit: 72, duration: "15 m", windowMs: 15 * 60 * 1000 },
   /** Stripe Checkout session creation for club dues — per user per club. */
   duesCheckout: { limit: 15, duration: "15 m", windowMs: 15 * 60 * 1000 },
+  /** Global search — per user. Each call fans out to several ILIKE queries. */
+  search: { limit: 30, duration: "1 m", windowMs: 60 * 1000 },
 };
 
 const localStore = globalThis.__cluboraRateLimitStore ?? new Map<string, LocalBucket>();

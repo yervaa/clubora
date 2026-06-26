@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { enforceRateLimit, getRateLimitErrorMessage } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { notificationPreferencesFormSchema } from "@/lib/validation/notification-preferences";
 import { changePasswordSchema, updateDisplayNameSchema } from "@/lib/validation/profile-settings";
@@ -78,7 +79,8 @@ export async function updateNotificationPreferencesAction(
   );
 
   if (error) {
-    return { ok: false, message: error.message };
+    console.error("[settings] notification preferences upsert failed:", error.message);
+    return { ok: false, message: "Could not save notification settings. Please try again." };
   }
 
   revalidatePath("/settings");
@@ -119,7 +121,8 @@ export async function updateDisplayNameAction(
   });
 
   if (authError) {
-    return { ok: false, message: authError.message };
+    console.error("[settings] display name auth update failed:", authError.message);
+    return { ok: false, message: "Could not save your display name. Please try again." };
   }
 
   const { error: profileError } = await supabase
@@ -128,7 +131,8 @@ export async function updateDisplayNameAction(
     .eq("id", user.id);
 
   if (profileError) {
-    return { ok: false, message: profileError.message };
+    console.error("[settings] display name profile update failed:", profileError.message);
+    return { ok: false, message: "Could not save your display name. Please try again." };
   }
 
   revalidatePath("/settings");
@@ -162,6 +166,11 @@ export async function changePasswordAction(
 
   const { currentPassword, newPassword } = parsed.data;
 
+  const rateLimit = await enforceRateLimit({ policy: "passwordChange", userId: user.id });
+  if (!rateLimit.success) {
+    return { ok: false, message: getRateLimitErrorMessage() };
+  }
+
   const { error: verifyError } = await supabase.auth.signInWithPassword({
     email: user.email,
     password: currentPassword,
@@ -172,7 +181,8 @@ export async function changePasswordAction(
     if (ml.includes("invalid login credentials") || ml.includes("invalid credentials")) {
       return { ok: false, message: "Current password is incorrect." };
     }
-    return { ok: false, message: verifyError.message };
+    console.error("[settings] password verification failed:", verifyError.message);
+    return { ok: false, message: "Could not update your password. Please try again." };
   }
 
   const { error: updateError } = await supabase.auth.updateUser({
@@ -180,7 +190,8 @@ export async function changePasswordAction(
   });
 
   if (updateError) {
-    return { ok: false, message: updateError.message };
+    console.error("[settings] password update failed:", updateError.message);
+    return { ok: false, message: "Could not update your password. Please try again." };
   }
 
   return { ok: true, message: "Password updated." };

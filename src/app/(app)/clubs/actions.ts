@@ -1,6 +1,6 @@
 "use server";
 
-import { randomBytes, randomUUID } from "crypto";
+import { createHash, randomBytes, randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { enforceRateLimit, getRateLimitErrorMessage } from "@/lib/rate-limit";
@@ -42,6 +42,16 @@ import {
 
 function generateJoinCode() {
   return randomBytes(4).toString("hex").toUpperCase();
+}
+
+/**
+ * Join codes are shareable club-join credentials, so they must never be written
+ * to logs in plaintext. Log only a short, non-reversible fingerprint that is
+ * still useful for correlating funnel events for the same code.
+ */
+function redactJoinCode(code: string | null | undefined): string {
+  if (!code) return "none";
+  return `sha256:${createHash("sha256").update(code).digest("hex").slice(0, 8)}`;
 }
 
 function getSafeValidationErrorMessage(result: { error: { issues: Array<{ message: string }> } }) {
@@ -303,7 +313,7 @@ export async function createClubAction(formData: FormData) {
     logClubCreateError("club-insert", {
       userId: user.id,
       clubId,
-      joinCode,
+      joinCode: redactJoinCode(joinCode),
       code: clubInsertError.code,
       message: clubInsertError.message,
       details: clubInsertError.details,
@@ -369,7 +379,7 @@ export async function joinClubAction(formData: FormData) {
   const normalizedJoinCode = parsed.data.joinCode;
   logJoinClub("start", {
     userId: user.id,
-    joinCode: normalizedJoinCode,
+    joinCode: redactJoinCode(normalizedJoinCode),
   });
 
   const rateLimit = await enforceRateLimit({
@@ -390,7 +400,7 @@ export async function joinClubAction(formData: FormData) {
   if (clubLookupError) {
     logJoinClub("lookup-error", {
       userId: user.id,
-      joinCode: normalizedJoinCode,
+      joinCode: redactJoinCode(normalizedJoinCode),
       code: clubLookupError.code,
       message: clubLookupError.message,
       details: clubLookupError.details,
@@ -403,7 +413,7 @@ export async function joinClubAction(formData: FormData) {
   if (!clubRow?.id || (clubRow as { status?: string }).status === "archived") {
     logJoinClub("invalid-code", {
       userId: user.id,
-      joinCode: normalizedJoinCode,
+      joinCode: redactJoinCode(normalizedJoinCode),
     });
     redirect(
       `/clubs/join?code=${encodeURIComponent(normalizedJoinCode)}&error=${encodeURIComponent(JOIN_REDIRECT_MESSAGES.invalidOrArchived)}`,
@@ -414,7 +424,7 @@ export async function joinClubAction(formData: FormData) {
   logJoinClub("lookup-success", {
     userId: user.id,
     clubId,
-    joinCode: normalizedJoinCode,
+    joinCode: redactJoinCode(normalizedJoinCode),
   });
 
   const { data: existingMembership } = await supabase

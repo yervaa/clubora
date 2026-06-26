@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -28,10 +29,25 @@ function normalizeRelationName(
   return relation.name;
 }
 
-/** Strip ILIKE wildcards from user input. */
+const SEARCH_MAX_CHARS = 100;
+
+/**
+ * Sanitize user input before it is interpolated into a PostgREST `.or(...)`
+ * filter string. Strips structural metacharacters that would let a term break
+ * out into extra filter conditions (commas, parentheses) plus ILIKE wildcards
+ * (`%` `_`), quotes, and backslashes. Dots and `@` are intentionally KEPT so
+ * email search still works — they are safe inside the value portion of a filter.
+ */
+function sanitizeSearchTerm(raw: string): string {
+  return raw
+    .replace(/[%_,()'"\\]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, SEARCH_MAX_CHARS);
+}
+
 function toIlikePattern(term: string): string {
-  const sanitized = term.replace(/[%_]/g, "");
-  return `%${sanitized}%`;
+  return `%${term}%`;
 }
 
 function isMissingMembershipStatusColumn(error: { code?: string; message?: string }): boolean {
@@ -83,10 +99,21 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rateLimit = await enforceRateLimit({ policy: "search", userId: user.id });
+  if (!rateLimit.success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429 },
+    );
+  }
+
   const url = new URL(request.url);
   const rawQ = url.searchParams.get("q")?.trim() ?? "";
 
-  if (rawQ.length < 2 || rawQ.length > 100) {
+  // Sanitize BEFORE length checks: structural metacharacters are stripped, so a
+  // term that is only metacharacters collapses to empty and must not match all.
+  const term = sanitizeSearchTerm(rawQ);
+  if (term.length < 2) {
     return NextResponse.json({
       clubs: [],
       announcements: [],
@@ -95,7 +122,7 @@ export async function GET(request: Request) {
     });
   }
 
-  const pattern = toIlikePattern(rawQ);
+  const pattern = toIlikePattern(term);
   const clubIds = await getActiveClubIds(supabase, user.id);
 
   if (clubIds.length === 0) {

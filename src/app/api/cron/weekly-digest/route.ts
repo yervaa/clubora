@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "crypto";
 import { NextResponse } from "next/server";
 import { runWeeklyDigestEmails } from "@/lib/notifications/weekly-digest";
 
@@ -6,12 +7,18 @@ function authorize(request: Request): boolean {
   if (!secret) {
     return false;
   }
+  // Accept the secret ONLY via the Authorization: Bearer header (no query-string
+  // fallback — query strings leak into logs/proxies). Compare in constant time.
   const auth = request.headers.get("authorization");
-  if (auth === `Bearer ${secret}`) {
-    return true;
+  if (!auth) {
+    return false;
   }
-  const url = new URL(request.url);
-  return url.searchParams.get("secret") === secret;
+  const provided = Buffer.from(auth);
+  const expected = Buffer.from(`Bearer ${secret}`);
+  if (provided.length !== expected.length) {
+    return false;
+  }
+  return timingSafeEqual(provided, expected);
 }
 
 /**

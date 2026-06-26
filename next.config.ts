@@ -14,12 +14,17 @@ function getSupabaseOrigin() {
   }
 }
 
-function buildCspReportOnlyValue() {
+function buildCspValue() {
   const supabaseOrigin = getSupabaseOrigin();
+  // connect-src must cover Supabase (REST + realtime websocket) and Stripe so
+  // dues checkout JS can talk to the Stripe API. `https:`/`wss:` already cover
+  // these broadly; the explicit origins are kept for clarity and in case the
+  // broad schemes are tightened later.
   const connectSources = [
     "'self'",
     "https:",
     "wss:",
+    "https://api.stripe.com",
     ...(supabaseOrigin ? [supabaseOrigin] : []),
   ];
 
@@ -42,8 +47,15 @@ function buildCspReportOnlyValue() {
 
 const securityHeaders = [
   {
-    key: "Content-Security-Policy-Report-Only",
-    value: buildCspReportOnlyValue(),
+    // ENFORCED CSP. NOTE: this policy still allows 'unsafe-inline' in script-src
+    // (nonce-based tightening is a separate future task). Before relying on this
+    // in production, validate it end-to-end in a Vercel preview deployment — click
+    // through dues checkout (Stripe redirect), announcements with attachments
+    // (signed Supabase URLs), and every interactive flow — and watch the browser
+    // console for CSP violations. If something breaks, widen the relevant
+    // directive (or temporarily revert to Content-Security-Policy-Report-Only).
+    key: "Content-Security-Policy",
+    value: buildCspValue(),
   },
   {
     key: "Referrer-Policy",
