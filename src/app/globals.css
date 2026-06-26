@@ -218,6 +218,28 @@ a {
   box-shadow: var(--focus-ring);
 }
 
+/* Club cover banners (gradient base + subtle dot texture). The gradient is set
+   inline from getClubCoverGradient(); this adds the overlay + clipping. */
+.club-cover {
+  position: relative;
+  overflow: hidden;
+}
+
+.club-cover__texture {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgb(255 255 255 / 0.22) 1px, transparent 1.5px);
+  background-size: 13px 13px;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .club-cover__texture {
+    mask-image: radial-gradient(140% 120% at 0% 0%, #000 35%, transparent 78%);
+    -webkit-mask-image: radial-gradient(140% 120% at 0% 0%, #000 35%, transparent 78%);
+  }
+}
+
 /* Club workspace: accent cover + flush subnav (layout chrome) */
 .club-cover-header {
   width: 100%;
@@ -475,6 +497,15 @@ a {
 .ui-empty-state__action .btn-primary {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
+}
+
+.ui-empty-state__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+  margin-top: 0.85rem;
 }
 
 .section-title,

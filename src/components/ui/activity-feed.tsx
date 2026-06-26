@@ -13,6 +13,8 @@ type ActivityFeedProps = {
   emptyIcon?: EmptyStateIcon;
   emptyTitle?: string;
   emptyDescription?: string;
+  /** Optional CTA shown in the empty state so it isn't a dead end */
+  emptyAction?: { label: string; href: string };
   /** Dashboard: club-colored initials on each row; omit section kicker */
   showClubDots?: boolean;
 };
@@ -58,6 +60,7 @@ export function ActivityFeed({
   emptyIcon = "ti-activity",
   emptyTitle = "No activity yet",
   emptyDescription = "Actions across your clubs will show up here.",
+  emptyAction,
   showClubDots = false,
 }: ActivityFeedProps) {
   return (
@@ -71,7 +74,13 @@ export function ActivityFeed({
 
       {items.length === 0 ? (
         <div className="mt-4">
-          <EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} embedded />
+          <EmptyState
+            icon={emptyIcon}
+            title={emptyTitle}
+            description={emptyDescription}
+            action={emptyAction ? { label: emptyAction.label, href: emptyAction.href } : undefined}
+            embedded
+          />
         </div>
       ) : (
         <ul className="mt-4 space-y-2">

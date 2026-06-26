@@ -59,6 +59,16 @@ export function getClubAccentIconColor(accent: ClubAccentColor): string {
   return CLUB_ACCENT_ICON_COLORS[accent];
 }
 
+/**
+ * Soft diagonal gradient for club cover banners, derived from the deterministic
+ * accent so it can't drift from the rest of a club's theming. Stays clearly
+ * pastel (only ~20% toward slate) so the dark cover icon keeps strong contrast
+ * across the whole band. `color-mix` degrades to the base accent if unsupported.
+ */
+export function getClubCoverGradient(accent: ClubAccentColor): string {
+  return `linear-gradient(135deg, ${accent} 0%, color-mix(in srgb, ${accent} 80%, #0f172a) 100%)`;
+}
+
 export function getClubRoleBadgeColors(accent: ClubAccentColor): {
   backgroundColor: string;
   color: string;

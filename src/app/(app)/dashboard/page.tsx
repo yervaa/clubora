@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ActivityFeed } from "@/components/ui/activity-feed";
 import { ClubColorDot } from "@/components/ui/club-color-dot";
+import { EmptyState } from "@/components/ui/empty-state";
 import { DashboardCalendar } from "@/components/ui/dashboard-calendar";
 import { DashboardClubsGrid } from "@/components/ui/dashboard-clubs-grid";
 import { DashboardHeroCard } from "@/components/ui/dashboard-hero-card";
@@ -163,23 +164,22 @@ export default async function DashboardPage() {
           />
 
           {!hasClubs ? (
-            <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 sm:p-8">
-              <p className="text-lg font-semibold text-slate-900">Join a club to see your schedule and updates</p>
-              <p className="mt-2 max-w-lg text-sm leading-6 text-slate-600">
-                Most people start with an invite or join code. Starting something new is one step away when you need it.
-              </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Link href="/clubs/join" className="btn-primary flex-1 text-center sm:flex-none sm:px-8">
-                  Join with a code
-                </Link>
-                <Link href="/clubs/create" className="text-center text-sm font-medium text-slate-500 hover:text-slate-800 sm:px-4">
-                  Or start a new club →
-                </Link>
-                <Link href="/discover" className="text-center text-sm font-medium text-slate-500 hover:text-slate-800 sm:px-4">
-                  Browse clubs first →
-                </Link>
-              </div>
-            </div>
+            <EmptyState
+              icon="ti-users"
+              title="Join a club to see your schedule and updates"
+              description="Most people start with an invite or join code. Starting something new is one step away when you need it."
+              action={{ label: "Join with a code", href: "/clubs/join" }}
+              footer={
+                <>
+                  <Link href="/clubs/create" className="text-sm font-medium text-slate-500 hover:text-slate-800">
+                    Or start a new club →
+                  </Link>
+                  <Link href="/discover" className="text-sm font-medium text-slate-500 hover:text-slate-800">
+                    Browse clubs first →
+                  </Link>
+                </>
+              }
+            />
           ) : (
             <>
           <DashboardStatTiles
@@ -199,7 +199,8 @@ export default async function DashboardPage() {
             showClubDots
             emptyIcon="ti-activity"
             emptyTitle="No activity yet"
-            emptyDescription="Actions across your clubs will show up here."
+            emptyDescription="Post an announcement or schedule an event and it'll show up here."
+            emptyAction={{ label: "Open a club", href: "/my-clubs" }}
           />
 
           <section id="important-now" aria-labelledby="dash-priority-heading" className="flex flex-col gap-4">

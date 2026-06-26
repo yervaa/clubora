@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { SVGProps } from "react";
+import type { ReactNode, SVGProps } from "react";
 
 /** Tabler-style icon names (matches product vocabulary; rendered as inline SVG). */
 export type EmptyStateIcon =
@@ -22,6 +22,8 @@ export type EmptyStateProps = {
   title: string;
   description: string;
   action?: EmptyStateAction;
+  /** Secondary content under the primary action (e.g. extra onboarding links) */
+  footer?: ReactNode;
   /** Tighter padding when nested inside a card widget */
   embedded?: boolean;
   className?: string;
@@ -100,7 +102,7 @@ function EmptyStateActionButton({ action }: { action: EmptyStateAction }) {
   );
 }
 
-export function EmptyState({ icon, title, description, action, embedded = false, className = "" }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action, footer, embedded = false, className = "" }: EmptyStateProps) {
   return (
     <div
       className={`ui-empty-state${embedded ? " ui-empty-state--embedded" : ""}${className ? ` ${className}` : ""}`.trim()}
@@ -116,6 +118,7 @@ export function EmptyState({ icon, title, description, action, embedded = false,
           <EmptyStateActionButton action={action} />
         </div>
       ) : null}
+      {footer ? <div className="ui-empty-state__footer">{footer}</div> : null}
     </div>
   );
 }
