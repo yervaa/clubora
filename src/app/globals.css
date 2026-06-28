@@ -3355,11 +3355,6 @@ button.surface-subcard:active {
   width: 64px;
 }
 
-.app-icon-sidebar-logo {
-  background: rgb(255 255 255 / 0.12);
-  color: var(--sidebar-accent);
-}
-
 .app-icon-sidebar-link {
   display: flex;
   width: 100%;
@@ -3395,6 +3390,14 @@ button.surface-subcard:active {
 
 .dashboard-topbar {
   background: #fff;
+}
+
+.app-brand-header {
+  overflow: visible;
+}
+
+.app-brand-header .clubora-logo {
+  object-fit: contain;
 }
 
 /* Mobile bottom nav (authenticated shell, below md) */

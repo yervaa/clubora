@@ -11,15 +11,7 @@ export function AppSidebar() {
 
   return (
     <aside className="app-icon-sidebar sticky top-0 hidden h-screen w-16 shrink-0 flex-col md:flex">
-      <div className="flex h-full flex-col items-center py-3">
-        <Link
-          href="/dashboard"
-          className="app-icon-sidebar-logo mb-3 flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold"
-          aria-label="Clubora home"
-        >
-          CO
-        </Link>
-
+      <div className="flex h-full w-full flex-col items-center py-3">
         <nav className="flex w-full flex-1 flex-col items-center gap-1 px-1.5" aria-label="Main">
           {APP_PRIMARY_NAV.map((link) => {
             const active = isPathActive(pathname, link.href, link.match);

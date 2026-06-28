@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { CluboraLogo } from "@/components/brand/clubora-logo";
 import { APP_PRIMARY_NAV, APP_SECONDARY_NAV } from "@/components/layout/navigation-config";
 import type { UserClub } from "@/lib/clubs/queries";
 import { isPathActive } from "@/lib/routing/nav-active";
@@ -20,7 +21,6 @@ type MobileNavDrawerProps = {
 export function MobileNavDrawer({ clubs }: MobileNavDrawerProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const titleId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -50,7 +50,7 @@ export function MobileNavDrawer({ clubs }: MobileNavDrawerProps) {
       className="fixed inset-x-0 bottom-0 top-16 z-[100] lg:hidden"
       role="dialog"
       aria-modal="true"
-      aria-labelledby={titleId}
+      aria-label="Navigation menu"
     >
       {/* Backdrop: below panel, receives taps outside drawer */}
       <button
@@ -66,9 +66,9 @@ export function MobileNavDrawer({ clubs }: MobileNavDrawerProps) {
         className="absolute left-0 top-0 z-10 flex h-full w-[min(20rem,min(92vw,100%))] max-w-[100vw] flex-col border-r border-slate-200 bg-white shadow-2xl"
       >
         <div className="flex h-14 flex-shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50/90 px-4">
-          <span id={titleId} className="text-sm font-bold tracking-tight text-slate-900">
-            Menu
-          </span>
+          <Link href="/dashboard" onClick={() => setOpen(false)} aria-label="Clubora home">
+            <CluboraLogo variant="full" theme="dark" height={28} />
+          </Link>
           <button
             type="button"
             className="flex h-11 min-w-11 items-center justify-center rounded-xl text-slate-600 transition hover:bg-slate-200/80"

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 300 108" width="100%" height="100%">
+  <defs>
+    <polygon id="hex" points="-8,-13.8 8,-13.8 16,0 8,13.8 -8,13.8 -16,0" fill="none" stroke-width="4.5" stroke-linejoin="round" />
+    <style>
+      .brand-text { font-family: 'Plus Jakarta Sans', 'Montserrat', sans-serif; font-size: 46px; font-weight: 700; letter-spacing: -1.5px; }
+      .icon-color { stroke: #263C5A; }
+      .text-color { fill: #263C5A; }
+      .accent { fill: #F05D53; }
+    </style>
+  </defs>
+  <g transform="translate(10, 0)">
+    <use href="#hex" x="40" y="32" class="icon-color" />
+    <use href="#hex" x="62" y="70" class="icon-color" />
+    <use href="#hex" x="18" y="70" class="icon-color" />
+    <circle cx="40" cy="57" r="9" class="accent" />
+  </g>
+  <text x="110" y="73" class="brand-text text-color">clubora</text>
+</svg>

@@ -6,6 +6,7 @@ import type { UserClub } from "@/lib/clubs/queries";
 import { getRecentNotifications, getUnreadNotificationCount } from "@/lib/notifications/queries";
 import { MobileNavDrawer } from "@/components/layout/mobile-nav-drawer";
 import { NotificationBell } from "@/components/ui/notification-bell";
+import { CluboraLogo } from "@/components/brand/clubora-logo";
 
 type NavbarProps = {
   /** Passed from the authenticated app shell so mobile users can reach clubs without the desktop sidebar. */
@@ -29,14 +30,8 @@ export async function Navbar({ clubs = [] }: NavbarProps) {
       <nav className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-2 px-2.5 sm:h-16 sm:gap-3 sm:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
           {user ? <MobileNavDrawer clubs={clubs} /> : null}
-          <Link
-            href={user ? "/dashboard" : "/"}
-            className="flex min-w-0 items-center gap-2 text-slate-900 sm:gap-3"
-          >
-            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-slate-900 text-xs font-bold text-white sm:h-9 sm:w-9 sm:rounded-xl sm:text-sm">
-              CO
-            </span>
-            <span className="truncate text-base font-bold tracking-tight sm:text-lg">Clubora</span>
+          <Link href={user ? "/dashboard" : "/"} className="flex min-w-0 shrink-0 items-center">
+            <CluboraLogo variant="full" theme="dark" height={36} />
           </Link>
         </div>
         <ul className="flex flex-shrink-0 items-center gap-0.5 sm:gap-2">
