@@ -17,30 +17,30 @@ export type PublicClubPagePayload = {
   clubId: string;
   name: string;
   description: string;
-  joinCode: string;
   requireJoinApproval: boolean;
   status: ClubStatus;
   upcomingEvents: PublicClubUpcomingEvent[];
 };
 
-const JOIN_CODE_REGEX = /^[A-Z0-9]{8}$/;
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Public marketing snapshot for `/club/[joinCode]`.
+ * Public marketing snapshot for `/club/[clubId]`.
  * Uses the service role only on the server — never exposed to the browser.
- * Returns null when the code is invalid or no club matches.
+ * Clubs are identified by id; the join_code is a private credential and is never
+ * included in this public payload. Returns null when the id is invalid or no club matches.
  */
-export const getPublicClubPageByJoinCode = cache(async (rawJoinCode: string): Promise<PublicClubPagePayload | null> => {
-  const joinCode = rawJoinCode.trim().toUpperCase();
-  if (!JOIN_CODE_REGEX.test(joinCode)) {
+export const getPublicClubPageById = cache(async (rawClubId: string): Promise<PublicClubPagePayload | null> => {
+  const clubId = rawClubId.trim();
+  if (!UUID_REGEX.test(clubId)) {
     return null;
   }
 
   const admin = createAdminClient();
   const { data: club, error: clubError } = await admin
     .from("clubs")
-    .select("id, name, description, join_code, status, require_join_approval")
-    .eq("join_code", joinCode)
+    .select("id, name, description, status, require_join_approval")
+    .eq("id", clubId)
     .maybeSingle();
 
   if (clubError || !club?.id) {
@@ -78,7 +78,6 @@ export const getPublicClubPageByJoinCode = cache(async (rawJoinCode: string): Pr
     clubId: club.id as string,
     name: String(club.name ?? "").trim() || "Club",
     description: typeof club.description === "string" ? club.description : "",
-    joinCode: String(club.join_code ?? joinCode).toUpperCase(),
     requireJoinApproval: Boolean(club.require_join_approval),
     status,
     upcomingEvents,

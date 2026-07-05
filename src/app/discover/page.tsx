@@ -173,7 +173,7 @@ export default async function DiscoverPage({ searchParams }: DiscoverPageProps) 
                     <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-600">{summarizeDescription(club.description)}</p>
                     <div className="mt-4">
                       <Link
-                        href={`/club/${club.joinCode}`}
+                        href={`/club/${club.id}`}
                         className="btn-primary inline-flex min-h-11 w-full items-center justify-center px-4 text-sm font-semibold sm:min-h-10 sm:w-auto"
                       >
                         Open club page

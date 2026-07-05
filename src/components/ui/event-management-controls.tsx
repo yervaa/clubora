@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { deleteEventAction, deleteEventSeriesAction, updateEventAction } from "@/app/(app)/clubs/actions";
-import { HydrationExtensionProbe } from "@/components/debug/hydration-extension-probe";
 import { EVENT_TYPE_OPTIONS } from "@/lib/events";
 
 type EventManagementControlsProps = {

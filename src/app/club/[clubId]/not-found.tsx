@@ -10,8 +10,7 @@ export default function PublicClubNotFound() {
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Club link</p>
           <h1 className="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">We could not find that club</h1>
           <p className="mt-3 text-sm leading-relaxed text-slate-600">
-            This page uses an 8-character join code in the link. The code may be mistyped, expired, or the club may no
-            longer be listed.
+            This club link is not valid. The club may be unavailable, no longer listed, or the link may be mistyped.
           </p>
           <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-slate-600">
             <li>Check the link you were sent for typos.</li>

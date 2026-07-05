@@ -1427,7 +1427,7 @@ export function ClubMembersSection({
                     </div>
                     <div className="flex flex-col gap-2">
                       <CopyJoinCodeButton joinCode={club.joinCode} className="btn-secondary w-full" />
-                      <CopyPublicClubPageButton joinCode={club.joinCode} className="btn-secondary w-full" />
+                      <CopyPublicClubPageButton clubId={club.id} className="btn-secondary w-full" />
                     </div>
                   </div>
                 ) : null}

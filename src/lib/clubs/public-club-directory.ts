@@ -3,14 +3,12 @@ import "server-only";
 import { cache } from "react";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const PUBLIC_JOIN_CODE_REGEX = /^[A-Z0-9]{8}$/;
 const SEARCH_MAX_CHARS = 80;
 
 type DirectoryClubRow = {
   id: string;
   name: string;
   description: string | null;
-  join_code: string | null;
   category?: string | null;
 };
 
@@ -18,7 +16,6 @@ export type PublicDirectoryClub = {
   id: string;
   name: string;
   description: string;
-  joinCode: string;
   category: string | null;
 };
 
@@ -46,21 +43,15 @@ export function normalizeDirectoryCategory(raw: string): string {
 
 function mapPublicDirectoryRows(rows: DirectoryClubRow[]): PublicDirectoryClub[] {
   return rows
-    .map((row) => {
-      const joinCode = String(row.join_code ?? "").trim().toUpperCase();
-      if (!PUBLIC_JOIN_CODE_REGEX.test(joinCode)) {
-        return null;
-      }
-
-      return {
-        id: row.id,
-        name: String(row.name ?? "").trim() || "Club",
-        description: typeof row.description === "string" ? row.description : "",
-        joinCode,
-        category: typeof row.category === "string" && row.category.trim() ? row.category.trim() : null,
-      } satisfies PublicDirectoryClub;
-    })
-    .filter((club): club is PublicDirectoryClub => Boolean(club))
+    .map(
+      (row) =>
+        ({
+          id: row.id,
+          name: String(row.name ?? "").trim() || "Club",
+          description: typeof row.description === "string" ? row.description : "",
+          category: typeof row.category === "string" && row.category.trim() ? row.category.trim() : null,
+        }) satisfies PublicDirectoryClub,
+    )
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
@@ -70,11 +61,21 @@ export const getPublicClubDirectory = cache(
     const query = normalizeDirectorySearchQuery(rawQuery);
     const requestedCategory = normalizeDirectoryCategory(rawCategory);
 
-    const withCategorySelect = "id, name, description, join_code, category";
-    const fallbackSelect = "id, name, description, join_code";
+    const withCategorySelect = "id, name, description, category";
+    const fallbackSelect = "id, name, description";
 
-    let withCategoryBuilder = admin.from("clubs").select(withCategorySelect).eq("status", "active").limit(160);
-    let fallbackBuilder = admin.from("clubs").select(fallbackSelect).eq("status", "active").limit(160);
+    let withCategoryBuilder = admin
+      .from("clubs")
+      .select(withCategorySelect)
+      .eq("status", "active")
+      .eq("is_listed", true)
+      .limit(160);
+    let fallbackBuilder = admin
+      .from("clubs")
+      .select(fallbackSelect)
+      .eq("status", "active")
+      .eq("is_listed", true)
+      .limit(160);
 
     if (query) {
       withCategoryBuilder = withCategoryBuilder.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
@@ -97,6 +98,7 @@ export const getPublicClubDirectory = cache(
         .from("clubs")
         .select("category")
         .eq("status", "active")
+        .eq("is_listed", true)
         .not("category", "is", null)
         .limit(300);
 

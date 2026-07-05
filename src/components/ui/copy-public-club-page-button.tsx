@@ -3,19 +3,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type CopyPublicClubPageButtonProps = {
-  joinCode: string;
+  clubId: string;
   className?: string;
   children?: React.ReactNode;
 };
 
 export function CopyPublicClubPageButton({
-  joinCode,
+  clubId,
   className = "",
   children = "Copy public page link",
 }: CopyPublicClubPageButtonProps) {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState(false);
-  const publicPath = useMemo(() => `/club/${encodeURIComponent(joinCode)}`, [joinCode]);
+  const publicPath = useMemo(() => `/club/${encodeURIComponent(clubId)}`, [clubId]);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {

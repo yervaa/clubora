@@ -3,11 +3,11 @@ import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
 import { PublicClubPageView } from "@/components/club/public-club-page-view";
 import { Navbar } from "@/components/layout/navbar";
-import { getPublicClubPageByJoinCode } from "@/lib/clubs/public-club-page";
+import { getPublicClubPageById } from "@/lib/clubs/public-club-page";
 import { createClient } from "@/lib/supabase/server";
 
 type PublicClubRouteProps = {
-  params: Promise<{ joinCode: string }>;
+  params: Promise<{ clubId: string }>;
 };
 
 function publicSiteOrigin(): URL | undefined {
@@ -24,14 +24,14 @@ function publicSiteOrigin(): URL | undefined {
 }
 
 export async function generateMetadata({ params }: PublicClubRouteProps): Promise<Metadata> {
-  const { joinCode } = await params;
-  const data = await getPublicClubPageByJoinCode(joinCode);
+  const { clubId } = await params;
+  const data = await getPublicClubPageById(clubId);
   const metadataBase = publicSiteOrigin();
 
   if (!data) {
     const title = "Club not found | Clubora";
     const description =
-      "That Clubora link is not valid. Check the join code or ask your club for a new invite.";
+      "That Clubora link is not valid. Check the link or ask your club for a new invite.";
     return {
       metadataBase,
       title,
@@ -61,14 +61,14 @@ export async function generateMetadata({ params }: PublicClubRouteProps): Promis
     title,
     description,
     alternates: {
-      canonical: `/club/${data.joinCode}`,
+      canonical: `/club/${data.clubId}`,
     },
     openGraph: {
       title,
       description,
       type: "website",
       siteName: "Clubora",
-      url: `/club/${data.joinCode}`,
+      url: `/club/${data.clubId}`,
     },
     twitter: {
       card: "summary",
@@ -80,8 +80,8 @@ export async function generateMetadata({ params }: PublicClubRouteProps): Promis
 
 export default async function PublicClubPage({ params }: PublicClubRouteProps) {
   noStore();
-  const { joinCode } = await params;
-  const data = await getPublicClubPageByJoinCode(joinCode);
+  const { clubId } = await params;
+  const data = await getPublicClubPageById(clubId);
   if (!data) {
     notFound();
   }

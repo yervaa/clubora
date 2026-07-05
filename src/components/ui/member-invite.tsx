@@ -5,12 +5,13 @@ import { CopyInviteLinkButton } from "@/components/ui/copy-invite-link-button";
 import { CopyPublicClubPageButton } from "@/components/ui/copy-public-club-page-button";
 
 type MemberInviteProps = {
+  clubId: string;
   joinCode: string;
   membersCount: number;
   requireJoinApproval?: boolean;
 };
 
-export function MemberInvite({ joinCode, membersCount, requireJoinApproval = false }: MemberInviteProps) {
+export function MemberInvite({ clubId, joinCode, membersCount, requireJoinApproval = false }: MemberInviteProps) {
   const isLowMembers = membersCount <= 5;
 
   return (
@@ -63,7 +64,7 @@ export function MemberInvite({ joinCode, membersCount, requireJoinApproval = fal
               <legend className="mb-2 w-full text-xs font-semibold uppercase tracking-wide text-slate-500">Copy for sharing</legend>
               <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
                 <CopyJoinCodeButton joinCode={joinCode} className="btn-secondary flex-1 min-w-[10rem]" />
-                <CopyPublicClubPageButton joinCode={joinCode} className="btn-secondary flex-1 min-w-[10rem]" />
+                <CopyPublicClubPageButton clubId={clubId} className="btn-secondary flex-1 min-w-[10rem]" />
               </div>
             </fieldset>
           </div>

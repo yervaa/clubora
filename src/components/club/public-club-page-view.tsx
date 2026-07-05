@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { formatEventDateAndTime, parseEventInstant } from "@/lib/events/format-event-display";
 import type { PublicClubPagePayload } from "@/lib/clubs/public-club-page";
-import { getSafeNextPath } from "@/lib/auth/redirects";
 
 type PublicClubPageViewProps = {
   data: PublicClubPagePayload;
@@ -20,11 +19,9 @@ function clubInitials(name: string): string {
 }
 
 export function PublicClubPageView({ data, viewerIsAuthenticated }: PublicClubPageViewProps) {
-  const { joinCode, name, description, requireJoinApproval, status, upcomingEvents } = data;
+  const { clubId, name, description, requireJoinApproval, status, upcomingEvents } = data;
   const isArchived = status === "archived";
-  const joinTarget = `/clubs/join?code=${encodeURIComponent(joinCode)}`;
-  const inviteLanding = `/join?code=${encodeURIComponent(joinCode)}`;
-  const nextAfterAuth = getSafeNextPath(joinTarget);
+  const joinTarget = `/clubs/join?clubId=${encodeURIComponent(clubId)}`;
 
   const nextMeeting = upcomingEvents.find((e) => e.eventType === "Meeting");
   const hasDescription = Boolean(description.trim());
@@ -227,13 +224,13 @@ export function PublicClubPageView({ data, viewerIsAuthenticated }: PublicClubPa
                 ) : (
                   <>
                     <Link
-                      href={inviteLanding}
+                      href={`/login?next=${encodeURIComponent(joinTarget)}`}
                       className="btn-primary inline-flex min-h-11 w-full items-center justify-center px-6 text-center text-base font-semibold sm:w-auto"
                     >
                       {primaryCtaLabel}
                     </Link>
                     <Link
-                      href={`/signup?next=${encodeURIComponent(nextAfterAuth)}`}
+                      href={`/signup?next=${encodeURIComponent(joinTarget)}`}
                       className="btn-secondary inline-flex min-h-11 w-full items-center justify-center px-6 text-center text-base font-semibold sm:w-auto"
                     >
                       Create account
@@ -242,19 +239,8 @@ export function PublicClubPageView({ data, viewerIsAuthenticated }: PublicClubPa
                 )}
               </div>
               <p className="mt-5 text-xs leading-relaxed text-slate-500">
-                {viewerIsAuthenticated ? (
-                  <>
-                    Use the school email your club expects. The next screen keeps join code{" "}
-                    <span className="font-mono font-medium text-slate-700">{joinCode}</span> so you do not have to
-                    re-type it.
-                  </>
-                ) : (
-                  <>
-                    Use the school email your club expects. After you sign in or sign up, you will continue to the join
-                    step with code <span className="font-mono font-medium text-slate-700">{joinCode}</span> already
-                    applied.
-                  </>
-                )}
+                Use the school email your club expects. On the join screen, enter the join code your club shared with
+                you to become a member.
               </p>
             </section>
           ) : null}
