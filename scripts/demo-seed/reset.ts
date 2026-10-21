@@ -5,6 +5,8 @@ import { DEMO_CLUB_JOIN_CODES, DEMO_EMAIL_DOMAIN } from "./constants";
  * Removes demo clubs (by join code) then demo auth users (`*.demo@clubora.test`).
  * Club delete uses RPC `delete_demo_clubs_by_join_codes` (migration 022) so CASCADE
  * can remove system roles / last president without RBAC delete triggers blocking.
+ * Also clears profiles orphaned by the deleted auth users (migration 059) — without
+ * this, re-seeding with the same fixed demo emails hits profiles' UNIQUE(email).
  */
 export async function resetDemoData(admin: SupabaseClient): Promise<{ clubsRemoved: number; usersRemoved: number }> {
   const { data: deletedClubRows, error: rpcErr } = await admin.rpc("delete_demo_clubs_by_join_codes", {
@@ -36,6 +38,16 @@ export async function resetDemoData(admin: SupabaseClient): Promise<{ clubsRemov
     }
 
     if (list.users.length < perPage) break;
+  }
+
+  const { error: cleanupErr } = await admin.rpc("cleanup_orphaned_profiles");
+  if (cleanupErr) {
+    if (cleanupErr.code === "PGRST202" || String(cleanupErr.message ?? "").includes("cleanup_orphaned_profiles")) {
+      throw new Error(
+        "RPC cleanup_orphaned_profiles missing. Apply supabase/059_cleanup_orphaned_profiles.sql to this Supabase project, then retry.",
+      );
+    }
+    throw cleanupErr;
   }
 
   return { clubsRemoved, usersRemoved };

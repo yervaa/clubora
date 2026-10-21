@@ -13,4 +13,5 @@ export const DEFAULT_PILOT_PASSWORD = "ShowcaseClubora!2026";
 export const DEFAULT_PILOT2_EMAIL = "showcase.pilot2@clubora.local";
 export const DEFAULT_PILOT2_PASSWORD = "ShowcaseClubora!2026";
 
-export const ROSTER_PASSWORD = "ShowcaseClubora!2026";
+export const ROSTER_PASSWORD_ENV_FLAG = "PILOT_SHOWCASE_ROSTER_PASSWORD";
+export const DEFAULT_ROSTER_PASSWORD = "ShowcaseClubora!2026";

@@ -26,9 +26,10 @@ import {
   DEFAULT_PILOT2_PASSWORD,
   DEFAULT_PILOT_EMAIL,
   DEFAULT_PILOT_PASSWORD,
+  DEFAULT_ROSTER_PASSWORD,
   PILOT_SHOWCASE_ENV_FLAG,
   PILOT_SHOWCASE_REMOTE_OK_FLAG,
-  ROSTER_PASSWORD,
+  ROSTER_PASSWORD_ENV_FLAG,
 } from "./constants";
 import { buildRoster, type RosterSlug } from "./roster";
 import {
@@ -201,7 +202,8 @@ async function main(): Promise<void> {
   const pilotPassword = (process.env.PILOT_SHOWCASE_PASSWORD ?? DEFAULT_PILOT_PASSWORD).trim();
   const pilot2Email = (process.env.PILOT_SHOWCASE_EMAIL_2 ?? DEFAULT_PILOT2_EMAIL).trim();
   const pilot2Password = (process.env.PILOT_SHOWCASE_PASSWORD_2 ?? DEFAULT_PILOT2_PASSWORD).trim();
-  const roster = buildRoster(pilotEmail, pilotPassword, pilot2Email, pilot2Password);
+  const rosterPassword = (process.env[ROSTER_PASSWORD_ENV_FLAG] ?? DEFAULT_ROSTER_PASSWORD).trim();
+  const roster = buildRoster(pilotEmail, pilotPassword, pilot2Email, pilot2Password, rosterPassword);
 
   const admin = createClient(url, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
@@ -257,6 +259,17 @@ async function main(): Promise<void> {
 
   console.log("Deleting all auth users…");
   await deleteAllAuthUsers(admin);
+
+  console.log("Cleaning up orphaned profiles…");
+  const { error: cleanupErr } = await admin.rpc("cleanup_orphaned_profiles");
+  if (cleanupErr) {
+    if (cleanupErr.code === "PGRST202" || String(cleanupErr.message ?? "").includes("cleanup_orphaned_profiles")) {
+      throw new Error(
+        "RPC cleanup_orphaned_profiles missing. Apply supabase/059_cleanup_orphaned_profiles.sql to this Supabase project, then retry.",
+      );
+    }
+    throw cleanupErr;
+  }
 
   console.log("Creating roster (9 users: 2 primary + 7 extras)…");
   const ids = await createRosterUsers(admin, roster);
@@ -374,7 +387,7 @@ async function main(): Promise<void> {
   console.log("\nDone.");
   console.log(`  Primary 1 (Jordan): ${pilotEmail}  /  ${pilotPassword}`);
   console.log(`  Primary 2 (Alex):   ${pilot2Email}  /  ${pilot2Password}`);
-  console.log(`  Other roster: showcase.*@clubora.local  /  ${ROSTER_PASSWORD}`);
+  console.log(`  Other roster: showcase.*@clubora.local  /  ${rosterPassword}`);
   console.log("  Join codes: MSACLB  DECACL  PHOCLB");
   console.log(
     "  Role matrix: each primary is President in one club, Member in another, Officer in the third (see header comment in run.ts).",

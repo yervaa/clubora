@@ -11,6 +11,7 @@ Realistic **local / staging** data for UI and product testing. All accounts use 
 ## Requirements
 
 - **Database:** apply Supabase migrations through **`022_demo_seed_club_delete.sql`** (adds `delete_demo_clubs_by_join_codes`). Without it, reset fails because RBAC triggers block deleting clubs that still have system roles.
+- Also apply **`059_cleanup_orphaned_profiles.sql`** (adds `cleanup_orphaned_profiles`). Without it, a second `npm run seed:demo` run fails: the fixed demo emails collide with `profiles` rows orphaned by the previous run's deleted auth users.
 - `.env.local` (or `.env`) with:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `SUPABASE_SERVICE_ROLE_KEY` (service role — required for `auth.admin`, the delete RPC, and bypassing RLS on inserts)
