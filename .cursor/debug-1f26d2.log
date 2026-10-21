@@ -1,6 +1,0 @@
-{"sessionId":"1f26d2","location":"notification-bell.tsx:mount","message":"notification bell sync state","data":{"sigsEqual":true,"serverSigLen":157,"syncedSigLen":157},"timestamp":1775661358661,"hypothesisId":"H2","runId":"pre-fix"}
-{"sessionId":"1f26d2","location":"hydration-mismatch-probe.tsx:useLayoutEffect","message":"post-layout fdprocessedid scan","data":{"fdprocessedidCount":0},"timestamp":1775661358653,"hypothesisId":"H1","runId":"pre-fix"}
-{"sessionId":"1f26d2","location":"probe-inline:afterInteractive-raf","message":"fdprocessedid scan","data":{"fdprocessedidCount":0},"timestamp":1775661358673,"hypothesisId":"H1","runId":"pre-fix"}
-{"sessionId":"1f26d2","location":"probe-inline:afterInteractive-sync","message":"fdprocessedid scan","data":{"fdprocessedidCount":0},"timestamp":1775661358659,"hypothesisId":"H1","runId":"pre-fix"}
-{"sessionId":"1f26d2","location":"hydration-mismatch-probe.tsx:useEffect","message":"post-paint fdprocessedid scan","data":{"fdprocessedidCount":0},"timestamp":1775661358657,"hypothesisId":"H1","runId":"pre-fix"}
-{"sessionId":"1f26d2","location":"probe-inline:afterInteractive-t250","message":"fdprocessedid scan","data":{"fdprocessedidCount":0},"timestamp":1775661358919,"hypothesisId":"H1","runId":"pre-fix"}
