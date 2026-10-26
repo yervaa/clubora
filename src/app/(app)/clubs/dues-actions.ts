@@ -7,7 +7,7 @@ import { canManageClubStripeDues, listPermissionHolderIds } from "@/lib/clubs/du
 import { getPublicSiteOrigin } from "@/lib/app/site-origin";
 import { enforceRateLimit, getRateLimitErrorMessage } from "@/lib/rate-limit";
 import { createBulkNotifications, createNotification } from "@/lib/notifications/create-notification";
-import { getStripe } from "@/lib/stripe/server";
+import { getStripe, isStripeConfigured } from "@/lib/stripe/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -228,6 +228,10 @@ export async function startDuesCheckoutAction(formData: FormData) {
     );
   }
 
+  if (!isStripeConfigured()) {
+    redirect(duesUrl(clubId, { error: encodeURIComponent("Online payments are turned off on the demo site.") }));
+  }
+
   const stripe = getStripe();
   const successUrl = `${origin}/clubs/${clubId}/dues?session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${origin}/clubs/${clubId}/dues?canceled=1`;
@@ -301,6 +305,10 @@ export async function startDuesCheckoutAction(formData: FormData) {
       },
     ],
   });
+
+  if (session.livemode) {
+    redirect(duesUrl(clubId, { error: encodeURIComponent("Live Stripe payments are disabled on the demo site.") }));
+  }
 
   if (!session.url) {
     redirect(duesUrl(clubId, { error: encodeURIComponent("Stripe did not return a checkout URL.") }));

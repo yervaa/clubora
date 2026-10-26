@@ -64,9 +64,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </form>
 
           <p className="mt-6 text-sm text-slate-600">
-            New to Clubora?{" "}
-            <Link href={`/signup?next=${encodeURIComponent(nextPath)}`} className="font-semibold text-slate-900 hover:text-slate-700">
-              Create an account
+            Just exploring?{" "}
+            <Link href="/" className="font-semibold text-slate-900 hover:text-slate-700">
+              Try the demo with one click
             </Link>
           </p>
         </div>

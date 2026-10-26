@@ -7,7 +7,8 @@ import { enforceRateLimit, getRateLimitErrorMessage } from "@/lib/rate-limit";
 import { getSafeNextPath } from "@/lib/auth/redirects";
 import { upsertCurrentUserProfile } from "@/lib/profiles";
 import { createClient } from "@/lib/supabase/server";
-import { loginSchema, profileSchema, signupSchema } from "@/lib/validation/auth";
+import { getDemoCredentials, type DemoRole } from "@/lib/demo";
+import { loginSchema } from "@/lib/validation/auth";
 
 function getAuthErrorMessage(error: unknown) {
   if (error instanceof Error && error.message.toLowerCase().includes("fetch failed")) {
@@ -107,67 +108,45 @@ export async function loginAction(formData: FormData) {
   redirect(nextPath);
 }
 
-export async function signupAction(formData: FormData) {
-  const rawNext = formData.get("next");
-  const nextPath = getSafeNextPath(
-    typeof rawNext === "string" ? rawNext : null,
-  );
-
-  const parsed = signupSchema.safeParse({
-    fullName: formData.get("full_name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-
-  if (!parsed.success) {
-    redirect(`/signup?error=${encodeURIComponent(getSafeValidationErrorMessage(parsed))}&next=${encodeURIComponent(nextPath)}`);
+/**
+ * One-click demo sign-in. Credentials come from server-only env vars and never reach
+ * the browser. Public signups are disabled on the demo site (here and in Supabase Auth).
+ */
+export async function demoSignInAction(formData: FormData) {
+  const rawRole = formData.get("role");
+  const role: DemoRole | null = rawRole === "officer" || rawRole === "member" ? rawRole : null;
+  if (!role) {
+    redirect("/?error=Unknown+demo+account.");
   }
 
-  const rateLimit = await enforceRateLimit({
-    policy: "signup",
-    hint: parsed.data.email,
-  });
+  const credentials = getDemoCredentials(role);
+  if (!credentials) {
+    console.error(`[demo] DEMO_${role.toUpperCase()}_EMAIL / _PASSWORD not configured`);
+    redirect("/?error=The+demo+is+temporarily+unavailable.");
+  }
+
+  const rateLimit = await enforceRateLimit({ policy: "demoLogin" });
   if (!rateLimit.success) {
-    redirect(`/signup?error=${encodeURIComponent(getRateLimitErrorMessage())}&next=${encodeURIComponent(nextPath)}`);
+    redirect(`/?error=${encodeURIComponent(getRateLimitErrorMessage())}`);
   }
 
   try {
     const supabase = await createClient();
-    const safeProfile = profileSchema.parse({ fullName: parsed.data.fullName });
-    const { data, error } = await supabase.auth.signUp({
-      email: parsed.data.email,
-      password: parsed.data.password,
-      options: {
-        data: { full_name: safeProfile.fullName },
-      },
-    });
-
+    const { error } = await supabase.auth.signInWithPassword(credentials);
     if (error) {
-      redirect(
-        `/signup?error=${encodeURIComponent(sanitizeAuthFlowError(error.message, "signup"))}&next=${encodeURIComponent(nextPath)}`,
-      );
-    }
-
-    if (data.session) {
-      if (data.user) {
-        const { error: profileError } = await upsertCurrentUserProfile(supabase, data.user);
-        if (profileError) {
-          redirect(`/signup?error=Could+not+prepare+your+profile.+Please+retry.&next=${encodeURIComponent(nextPath)}`);
-        }
-      }
-      redirect(nextPath);
+      console.error("[demo] sign-in failed:", error.message);
+      redirect("/?error=Could+not+start+the+demo.+Please+try+again.");
     }
   } catch (error) {
     if (isRedirectError(error)) {
       throw error;
     }
-
-    redirect(
-      `/signup?error=${encodeURIComponent(sanitizeAuthFlowError(getAuthErrorMessage(error), "signup"))}&next=${encodeURIComponent(nextPath)}`,
-    );
+    console.error("[demo] sign-in failed:", getAuthErrorMessage(error));
+    redirect("/?error=Could+not+start+the+demo.+Please+try+again.");
   }
 
-  redirect(`/login?message=Check+your+email+to+confirm+your+account.&next=${encodeURIComponent(nextPath)}`);
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
 }
 
 export async function logoutAction() {

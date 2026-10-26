@@ -2,9 +2,19 @@
 
 Clubora is a Next.js + Supabase web app for school clubs to manage announcements, events, and member engagement in one place.
 
+## Demo site
+
+This deployment is a **public demo**. All data is fictional.
+
+- Visitors sign in with one click from the landing page as **Demo Officer** or **Demo Member**. Public signup is disabled (the `/signup` route redirects home, and "Allow new users to sign up" must stay **off** in Supabase Auth).
+- Demo credentials live only in server-side env vars: `DEMO_OFFICER_EMAIL`, `DEMO_OFFICER_PASSWORD`, `DEMO_MEMBER_EMAIL`, `DEMO_MEMBER_PASSWORD` (set them locally and in Vercel).
+- `npm run reset-demo` wipes the database and reseeds it with 3 clubs, 15 fictional people, events, RSVPs, and paid/unpaid dues. See [scripts/seed-demo/README.md](./scripts/seed-demo/README.md).
+- [`supabase/060_demo_mode.sql`](./supabase/060_demo_mode.sql) restricts demo accounts to demo clubs and locks the shared accounts (no club creation, no email/password/name changes).
+- Stripe runs in test mode only. The app refuses any key that is not `sk_test_` / `rk_test_`, and when Stripe is not configured, the checkout button returns a friendly "payments are turned off" message.
+
 ## MVP Features
 
-- Email signup, login, and logout
+- Email login and logout (public signup disabled on the demo site)
 - Protected dashboard and club routes
 - Create a club and join a club with a join code
 - Officer/member club roles
@@ -74,6 +84,7 @@ npm run dev
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `UPSTASH_REDIS_REST_URL`
    - `UPSTASH_REDIS_REST_TOKEN`
+   - `DEMO_OFFICER_EMAIL`, `DEMO_OFFICER_PASSWORD`, `DEMO_MEMBER_EMAIL`, `DEMO_MEMBER_PASSWORD`
 4. Add the variables to both `Preview` and `Production`.
 5. Redeploy after any env change.
 
@@ -94,19 +105,18 @@ On the first server boot in each Vercel environment (`preview` / `production`), 
 
 ## Post-Deploy Smoke Test
 
-1. Sign up a new user
-2. Log in and log out
-3. Create a club
-4. Join a club from a second account using the join code
-5. Open a club page and verify:
+1. Click "Try as officer" on the landing page, then log out
+2. Click "Try as member" and confirm only the 3 demo clubs are visible
+3. Confirm `/signup` redirects to the landing page and the demo banner shows on every page
+4. As the officer, open a club page and verify:
    - officer can post announcements
    - officer can create events
    - members can RSVP
-6. Open the dashboard and verify:
+5. Open the dashboard and verify:
    - clubs render
    - recent announcements render
    - upcoming events render
-7. Verify protected routes redirect unauthenticated users to `/login`
+6. Verify protected routes redirect unauthenticated users to `/login`
 
 ## Project Structure
 
