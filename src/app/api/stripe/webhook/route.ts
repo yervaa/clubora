@@ -30,6 +30,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  // Demo site runs Stripe in test mode only; ignore any live-mode event outright.
+  if (event.livemode) {
+    console.error("[stripe webhook] rejected live-mode event", event.id);
+    return NextResponse.json({ error: "Live mode not accepted" }, { status: 400 });
+  }
+
   if (event.type === "checkout.session.completed") {
     try {
       await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { DemoBanner } from "@/components/layout/demo-banner";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={jakarta.variable} suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning={true}>
+        <DemoBanner />
         {children}
       </body>
     </html>

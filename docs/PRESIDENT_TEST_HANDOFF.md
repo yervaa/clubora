@@ -12,7 +12,7 @@ See also [LAUNCH_READINESS.md](./LAUNCH_READINESS.md) for production-oriented ri
 
 - [ ] Applied all numbered SQL files under [`supabase/`](../supabase/) **in order**: `001` → `025` (in the Supabase SQL Editor, or your usual migration pipeline). Skipping a file causes drift; `001` alone is not enough.
 - [ ] **Roster / clubmate visibility:** confirm at least [`024_profiles_select_clubmates.sql`](../supabase/024_profiles_select_clubmates.sql) and [`025_get_club_members_for_view_row_security.sql`](../supabase/025_get_club_members_for_view_row_security.sql) are applied on that project. Missing these often shows empty rosters or permission errors for members.
-- [ ] **If using the pilot showcase seed:** apply [`023_pilot_showcase_reset.sql`](../supabase/023_pilot_showcase_reset.sql) first, then follow [scripts/pilot-showcase/README.md](../scripts/pilot-showcase/README.md). Do **not** run pilot seed on a project that must keep real users.
+- [ ] **If using the demo seed:** apply migrations through [`060_demo_mode.sql`](../supabase/060_demo_mode.sql), then follow [scripts/seed-demo/README.md](../scripts/seed-demo/README.md). `npm run reset-demo` deletes **every** user and club. Do **not** run it on a project that must keep real users.
 
 ---
 
@@ -40,7 +40,7 @@ See also [LAUNCH_READINESS.md](./LAUNCH_READINESS.md) for production-oriented ri
 
 | Path | When | You do |
 |------|------|--------|
-| **Pilot seed** | Throwaway Supabase project; full fixture (clubs, roster, tasks, etc.) | Run seed per [scripts/pilot-showcase/README.md](../scripts/pilot-showcase/README.md). Share **one** login email/password (defaults in [scripts/pilot-showcase/constants.ts](../scripts/pilot-showcase/constants.ts) or your env overrides). Never share the service role key. |
+| **Demo seed** | Throwaway Supabase project; full fixture (clubs, roster, events, dues) | Run `npm run reset-demo` per [scripts/seed-demo/README.md](../scripts/seed-demo/README.md). Visitors use the one-click demo buttons; credentials are env-only (`DEMO_*`). Never share the service role key. |
 | **Real accounts** | Closer to production | Sign up (or have them sign up), create or join a club, ensure they have president/officer access where you want it tested. Optionally add a second account for member-only flows. |
 
 - [ ] Chosen path recorded: _________________________

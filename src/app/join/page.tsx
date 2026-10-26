@@ -64,8 +64,8 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
               <Link href={`/login?next=${encodeURIComponent(nextPath)}`} className="btn-primary text-center">
                 Log in to continue
               </Link>
-              <Link href={`/signup?next=${encodeURIComponent(nextPath)}`} className="btn-secondary text-center">
-                Create account
+              <Link href="/" className="btn-secondary text-center">
+                Try the demo
               </Link>
             </div>
           </div>

@@ -20,8 +20,8 @@ export default function PublicClubNotFound() {
             <Link href="/login" className="btn-primary inline-flex min-h-11 items-center justify-center px-5 text-center text-sm font-semibold">
               Log in
             </Link>
-            <Link href="/signup" className="btn-secondary inline-flex min-h-11 items-center justify-center px-5 text-center text-sm font-semibold">
-              Create account
+            <Link href="/" className="btn-secondary inline-flex min-h-11 items-center justify-center px-5 text-center text-sm font-semibold">
+              Try the demo
             </Link>
           </div>
           <p className="mt-6 text-center text-xs text-slate-500">

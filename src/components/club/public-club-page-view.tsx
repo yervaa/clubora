@@ -230,10 +230,10 @@ export function PublicClubPageView({ data, viewerIsAuthenticated }: PublicClubPa
                       {primaryCtaLabel}
                     </Link>
                     <Link
-                      href={`/signup?next=${encodeURIComponent(joinTarget)}`}
+                      href="/"
                       className="btn-secondary inline-flex min-h-11 w-full items-center justify-center px-6 text-center text-base font-semibold sm:w-auto"
                     >
-                      Create account
+                      Try the demo
                     </Link>
                   </>
                 )}

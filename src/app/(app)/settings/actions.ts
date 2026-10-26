@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { DEMO_ACCOUNT_LOCKED_MESSAGE, isDemoUser } from "@/lib/demo";
 import { enforceRateLimit, getRateLimitErrorMessage } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { notificationPreferencesFormSchema } from "@/lib/validation/notification-preferences";
@@ -106,6 +107,10 @@ export async function updateDisplayNameAction(
     return { ok: false, message: "You must be signed in to update your profile." };
   }
 
+  if (await isDemoUser(supabase, user.id)) {
+    return { ok: false, message: DEMO_ACCOUNT_LOCKED_MESSAGE };
+  }
+
   const parsed = updateDisplayNameSchema.safeParse({
     fullName: formData.get("full_name"),
   });
@@ -152,6 +157,10 @@ export async function changePasswordAction(
 
   if (!user?.email) {
     return { ok: false, message: "You must be signed in with an email account to change your password." };
+  }
+
+  if (await isDemoUser(supabase, user.id)) {
+    return { ok: false, message: DEMO_ACCOUNT_LOCKED_MESSAGE };
   }
 
   const parsed = changePasswordSchema.safeParse({

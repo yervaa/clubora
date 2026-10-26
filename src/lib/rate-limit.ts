@@ -8,6 +8,7 @@ import { Redis } from "@upstash/redis";
 type PolicyName =
   | "login"
   | "signup"
+  | "demoLogin"
   | "passwordChange"
   | "clubCreate"
   | "clubJoin"
@@ -49,6 +50,8 @@ type LocalBucket = {
 const RATE_LIMIT_POLICIES: Record<PolicyName, PolicyConfig> = {
   login: { limit: 5, duration: "10 m", windowMs: 10 * 60 * 1000 },
   signup: { limit: 4, duration: "30 m", windowMs: 30 * 60 * 1000 },
+  /** One-click demo sign-in — per IP. Looser than login so visitors can switch roles freely. */
+  demoLogin: { limit: 30, duration: "10 m", windowMs: 10 * 60 * 1000 },
   /** Current-password verification on password change — per user. Brute-force guard. */
   passwordChange: { limit: 5, duration: "15 m", windowMs: 15 * 60 * 1000 },
   clubCreate: { limit: 6, duration: "1 h", windowMs: 60 * 60 * 1000 },

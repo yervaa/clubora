@@ -4,6 +4,7 @@ import { createHash, randomBytes, randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { enforceRateLimit, getRateLimitErrorMessage } from "@/lib/rate-limit";
+import { isDemoUser } from "@/lib/demo";
 import { upsertCurrentUserProfile } from "@/lib/profiles";
 import { sanitizeInlineText } from "@/lib/sanitize";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -257,6 +258,10 @@ export async function createClubAction(formData: FormData) {
 
   if (!user) {
     redirect("/login");
+  }
+
+  if (await isDemoUser(supabase, user.id)) {
+    redirect(`/clubs/create?error=${encodeURIComponent("Demo accounts can't create new clubs.")}`);
   }
 
   logClubCreateFunnel("validated", {

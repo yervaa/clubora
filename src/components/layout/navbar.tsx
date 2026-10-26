@@ -73,8 +73,8 @@ export async function Navbar({ clubs = [] }: NavbarProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/signup" className="btn-primary min-h-10 px-3 py-2 text-sm sm:min-h-0 sm:px-4">
-                  Sign Up
+                <Link href="/" className="btn-primary min-h-10 px-3 py-2 text-sm sm:min-h-0 sm:px-4">
+                  Try the demo
                 </Link>
               </li>
             </>
